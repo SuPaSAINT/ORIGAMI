@@ -25,7 +25,7 @@ function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff
     num_targets = length(attacker_uncovered_payoff(:,1));
 
     % NEED TO SORT TARGETS BY MAXIMAL attacker_uncovered_payoff IN DECENDING ORDER
-    [payoff,target_index] = sort(attacker_uncovered_payoff, 'descend');
+    [~,target_index] = sort(attacker_uncovered_payoff, 'descend');
 
     % INITIALIZE REMAINING DEFENDER RESOURCES
     defender_resources_left = defender_resources;
