@@ -18,6 +18,8 @@
 % 
 % -----------------------------------------------------------------------------
 function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources)
+    % IF DEBUG_PRINT = 1, THEN DEBUG PRINT STATEMENTS ENABLED, ELSE DISABLED;
+    DEBUG_PRINT = 0;
 
     % THE SIZE OF THE VECTOR DETERMINES THE NUMBER OF TARGETS
     num_targets = length(attacker_uncovered_payoff(:,1));
@@ -32,8 +34,9 @@ function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff
     coverage = zeros(num_targets,1);
     added_coverage = zeros(num_targets,1);
 
-    % INITIALIZE THE COVERAGE BOUND (I THINK x = coverage_bound...so put this here for now...)
-    coverage_bound = (coverage(target_index(1))*attacker_covered_payoff(target_index(1))) + ((1-coverage(target_index(1)))*attacker_uncovered_payoff(target_index(1)));
+    % INITIALIZE THE COVERAGE BOUND TO BE THE MINIMAL EXPECTED PAYOFF OF THE ATTACKER
+    coverage_bound = min(attacker_covered_payoff);
+    min_coverage_bound = coverage_bound;
 
     % INITIALIZE THE RATIO VECTOR
     ratio = zeros(num_targets,1);
@@ -44,15 +47,22 @@ function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff
 
         added_coverage(target_index(t)) = ( (attacker_uncovered_payoff(target_index(t+1)) - attacker_uncovered_payoff(target_index(t))) / (attacker_covered_payoff(target_index(t)) - attacker_uncovered_payoff(target_index(t))) ) - coverage(target_index(t));
 
-        if ( (coverage(target_index(t)) + added_coverage(target_index(t))) > 1)
-            display = fprintf('Coverage probability of target %d exceeded 1 so break.',target_index(t));
-            disp(display)
-            break;
+        if ((coverage(target_index(t)) + added_coverage(target_index(t))) >= 1)
+            if (DEBUG_PRINT == 1)
+                display = fprintf('ORIGAMI_MSG01: Coverage probability of target %d >= 1.',target_index(t));
+                disp(display)
+            end % if
+            coverage_bound = max(coverage_bound,attacker_covered_payoff(target_index(t)));
         end % if
 
-        if ( sum(added_coverage(:,1)) > defender_resources_left )
-            display = fprintf('Sum of added coverage probability is greater than the remaining defender resources so break. (target = %d)',target_index(t));
-            disp(display)
+        % NOTE: THAT INEQUALITIES DO NOT MATCH THE PROPOSED PSEUDO-CODE BECAUSE THEY WERE INCORRECT
+        %   COVERAGE BOUND SHOULD CAUSE BREAK IF GREATER THAN THE MINIMAL ATTACKER PAYOFF FOR COVERED TARGET
+        %   IF TOTAL ADDED COVERAGE IS >= TO REMAINING DEFENDER RESOURCES THEN BREAK
+        if ((coverage_bound > min_coverage_bound) || sum(added_coverage(:,1)) >= defender_resources_left)
+            if (DEBUG_PRINT == 1)
+                display = fprintf('ORIGAMI_MSG02: Sum of added coverage probability is greater than the remaining defender resources so break. (target = %d)',target_index(t));
+                disp(display)
+            end % if
             break;
         end % if
 
@@ -67,11 +77,20 @@ function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff
 
     coverage(target_index(t)) = coverage(target_index(t)) + ( (ratio(target_index(t))*defender_resources_left) / sum(ratio(:,1)));
 
-    if ( coverage(target_index(t)) > 1)
-        display = fprintf('Coverage probability of target %d exceeded 1.',target_index(t));
-        disp(display)
+    if (coverage(target_index(t)) >= 1)
+        if (DEBUG_PRINT == 1)
+            display = fprintf('ORIGAMI_MSG03: Coverage probability of target %d >= 1.',target_index(t));
+            disp(display)
+        end % if
+        coverage_bound = max(coverage_bound,attacker_covered_payoff(target_index(t)));
+    end % if
+    
+    if (coverage_bound > min_coverage_bound)
+        coverage(target_index(t)) = ( (coverage_bound - attacker_uncovered_payoff(target_index(t))) / (attacker_covered_payoff(target_index(t)) - attacker_uncovered_payoff(target_index(t))) )
     end % if
 
-breakpoint = 0; % DUMMY OPERATION TO SET BREAKPOINT
+    % if (DEBUG_PRINT == 1)
+        coverage_sum = sum(coverage);
+    % end % if
 
 end % function

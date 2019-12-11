@@ -81,7 +81,7 @@ config_time_seconds = rem(config_time_seconds,60)
 % % EXECUTE THE GAME CALCULATION
 % [NASH_EQ_1,payoff_1,iterations_1,err_1] = NPG2(num_of_strat_1,REDUCED_GAME_COST_MATRIX_1);
 
-[coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources(1))
+[coverage_game1] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources(1));
 
 game_1_time = clock;
 game_1_time_seconds = etime(game_1_time,config_time);
@@ -120,6 +120,8 @@ game_1_time_seconds = rem(game_1_time_seconds,60)
 % % EXECUTE THE GAME CALCULATION
 % [NASH_EQ_2,payoff_2,iterations_2,err_2] = NPG2(num_of_strat_2,REDUCED_GAME_COST_MATRIX_2);
 
+[coverage_game2] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources(2));
+
 game_2_time = clock;
 game_2_time_seconds = etime(game_2_time,game_1_time);
 game_2_time_minutes = floor(game_2_time_seconds/60)
@@ -156,6 +158,8 @@ game_2_time_seconds = rem(game_2_time_seconds,60)
 % 
 % % EXECUTE THE GAME CALCULATION
 % [NASH_EQ_3,payoff_3,iterations_3,err_3] = NPG2(num_of_strat_3,REDUCED_GAME_COST_MATRIX_3);
+
+[coverage_game3] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources(3));
 
 game_3_time = clock;
 game_3_time_seconds = etime(game_3_time,game_2_time);
