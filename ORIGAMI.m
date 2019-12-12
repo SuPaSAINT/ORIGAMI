@@ -60,7 +60,7 @@ function [coverage, attacker_payoff, defender_payoff] = ORIGAMI(attacker_uncover
 
         if ((coverage(target_index(t)) + added_coverage(target_index(t))) >= 1)
             if (DEBUG_PRINT == 1)
-                display = fprintf('ORIGAMI_MSG01: Coverage probability of target %d >= 1.',target_index(t));
+                display = fprintf('ORIGAMI_MSG01: Target %d.',target_index(t));
                 disp(display)
             end % if
             coverage_bound = max(coverage_bound,attacker_covered_payoff(target_index(t)));
@@ -71,7 +71,7 @@ function [coverage, attacker_payoff, defender_payoff] = ORIGAMI(attacker_uncover
         %   IF TOTAL ADDED COVERAGE IS >= TO REMAINING DEFENDER RESOURCES THEN BREAK
         if ((coverage_bound > coverage_bound_min) || sum(added_coverage(:,1)) >= defender_resources_left)
             if (DEBUG_PRINT == 1)
-                display = fprintf('ORIGAMI_MSG02: Sum of added coverage probability is greater than the remaining defender resources so break. (target = %d)',target_index(t));
+                display = fprintf('ORIGAMI_MSG02: Target %d.',target_index(t));
                 disp(display)
             end % if
             break;
@@ -90,7 +90,7 @@ function [coverage, attacker_payoff, defender_payoff] = ORIGAMI(attacker_uncover
 
     if (coverage(target_index(t)) >= 1)
         if (DEBUG_PRINT == 1)
-            display = fprintf('ORIGAMI_MSG03: Coverage probability of target %d >= 1.',target_index(t));
+            display = fprintf('ORIGAMI_MSG03: Target %d.',target_index(t));
             disp(display)
         end % if
         coverage_bound = max(coverage_bound,attacker_covered_payoff(target_index(t)));
