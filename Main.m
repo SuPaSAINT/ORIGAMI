@@ -54,34 +54,8 @@ config_time_seconds = rem(config_time_seconds,60)
 % %%%%%%%%%%%%%%%%%% %
 %  EVALUATE GAME #1  %
 % %%%%%%%%%%%%%%%%%% %
-% % CREATE THE DOMINATING STRATEGIES MATRICES FOR EACH PLAYER
-% DOM_STRAT_1_DEFENDER  = DominatingStrategies(GAME_COST_MATRIX_1, 'defender');
-% DOM_STRAT_1_ATTACKER1 = DominatingStrategies(GAME_COST_MATRIX_1, 'attacker1');
-% DOM_STRAT_1_ATTACKER2 = DominatingStrategies(GAME_COST_MATRIX_1, 'attacker2');
-% 
-% % REDUCE THE RESOURCE ALLOCATIONS MATRICES FOR EACH PLAYER (THROW AWAY DOMINATED STRATEGIES)
-% NEW_STRAT_1_DEFENDER  = ReducedMatrix(DOM_STRAT_1_DEFENDER,  RESOURCE_MATRIX_ARRAY_1, 'defender');
-% NEW_STRAT_1_ATTACKER1 = ReducedMatrix(DOM_STRAT_1_ATTACKER1, RESOURCE_MATRIX_ARRAY_1, 'attacker1');
-% NEW_STRAT_1_ATTACKER2 = ReducedMatrix(DOM_STRAT_1_ATTACKER2, RESOURCE_MATRIX_ARRAY_1, 'attacker2');
-% 
-% % CREATE AN ARRAY OF 2-D RESOURCE MATRICES (REDUCED)
-% REDUCED_RESOURCE_MATRIX_ARRAY_1 = {NEW_STRAT_1_ATTACKER1 NEW_STRAT_1_ATTACKER2 NEW_STRAT_1_DEFENDER};
-% 
-% % BUILD THE 2-D GAME COST MATRICES USING THE SETTINGS AND RESPECTIVE GAME REDUCED RESOURCE MATRIX ARRAY
-% REDUCED_GAME_COST_MATRIX_1 = GameBuild(1,num_cyber_nodes,REDUCED_RESOURCE_MATRIX_ARRAY_1,CONNECTIONS,COST,threshold);
-% 
-% % FIND THE SIZE OF EACH REDUCED RESOURCE ALLOCATIONS MATRIX FOR EACH PLAYER
-% len_new_strat_1_defender  = size(NEW_STRAT_1_DEFENDER);
-% len_new_strat_1_attacker1 = size(NEW_STRAT_1_ATTACKER1);
-% len_new_strat_1_attacker2 = size(NEW_STRAT_1_ATTACKER2);
-% 
-% % CREATE AN ARRAY OF REDUCED RESOURCE ALLOCATIONS MATRIX SIZES
-% num_of_strat_1 = [len_new_strat_1_attacker1(1) len_new_strat_1_attacker2(1) len_new_strat_1_defender(1)];
-% 
-% % EXECUTE THE GAME CALCULATION
-% [NASH_EQ_1,payoff_1,iterations_1,err_1] = NPG2(num_of_strat_1,REDUCED_GAME_COST_MATRIX_1);
-
-[coverage_game1] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources(1));
+[coverage_game1, attacker_payoff_game1, defender_payoff_game1] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, ...
+                                                                         defender_uncovered_payoff, defender_covered_payoff, defender_resources(1));
 
 game_1_time = clock;
 game_1_time_seconds = etime(game_1_time,config_time);
@@ -93,34 +67,8 @@ game_1_time_seconds = rem(game_1_time_seconds,60)
 % %%%%%%%%%%%%%%%%%% %
 %  EVALUATE GAME #2  %
 % %%%%%%%%%%%%%%%%%% %
-% % CREATE THE DOMINATING STRATEGIES MATRICES FOR EACH PLAYER
-% DOM_STRAT_2_DEFENDER  = DominatingStrategies(GAME_COST_MATRIX_2, 'defender');
-% DOM_STRAT_2_ATTACKER1 = DominatingStrategies(GAME_COST_MATRIX_2, 'attacker1');
-% DOM_STRAT_2_ATTACKER2 = DominatingStrategies(GAME_COST_MATRIX_2, 'attacker2');
-% 
-% % REDUCE THE RESOURCE ALLOCATIONS MATRICES FOR EACH PLAYER (THROW AWAY DOMINATED STRATEGIES)
-% NEW_STRAT_2_DEFENDER  = ReducedMatrix(DOM_STRAT_2_DEFENDER,  RESOURCE_MATRIX_ARRAY_2, 'defender');
-% NEW_STRAT_2_ATTACKER1 = ReducedMatrix(DOM_STRAT_2_ATTACKER1, RESOURCE_MATRIX_ARRAY_2, 'attacker1');
-% NEW_STRAT_2_ATTACKER2 = ReducedMatrix(DOM_STRAT_2_ATTACKER2, RESOURCE_MATRIX_ARRAY_2, 'attacker2');
-% 
-% % CREATE AN ARRAY OF 2-D RESOURCE MATRICES (REDUCED)
-% REDUCED_RESOURCE_MATRIX_ARRAY_2 = {NEW_STRAT_2_ATTACKER1 NEW_STRAT_2_ATTACKER2 NEW_STRAT_2_DEFENDER};
-% 
-% % BUILD THE 2-D GAME COST MATRICES USING THE SETTINGS AND RESPECTIVE GAME REDUCED RESOURCE MATRIX ARRAY
-% REDUCED_GAME_COST_MATRIX_2 = GameBuild(1,num_cyber_nodes,REDUCED_RESOURCE_MATRIX_ARRAY_2,CONNECTIONS,COST,threshold);
-% 
-% % FIND THE SIZE OF EACH REDUCED RESOURCE ALLOCATIONS MATRIX FOR EACH PLAYER
-% len_new_strat_2_defender  = size(NEW_STRAT_2_DEFENDER);
-% len_new_strat_2_attacker1 = size(NEW_STRAT_2_ATTACKER1);
-% len_new_strat_2_attacker2 = size(NEW_STRAT_2_ATTACKER2);
-% 
-% % CREATE AN ARRAY OF REDUCED RESOURCE ALLOCATIONS MATRIX SIZES
-% num_of_strat_2 = [len_new_strat_2_attacker1(1) len_new_strat_2_attacker2(1) len_new_strat_2_defender(1)];
-% 
-% % EXECUTE THE GAME CALCULATION
-% [NASH_EQ_2,payoff_2,iterations_2,err_2] = NPG2(num_of_strat_2,REDUCED_GAME_COST_MATRIX_2);
-
-[coverage_game2] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources(2));
+[coverage_game2, attacker_payoff_game2, defender_payoff_game2] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, ...
+                                                                         defender_uncovered_payoff, defender_covered_payoff, defender_resources(2));
 
 game_2_time = clock;
 game_2_time_seconds = etime(game_2_time,game_1_time);
@@ -132,34 +80,8 @@ game_2_time_seconds = rem(game_2_time_seconds,60)
 % %%%%%%%%%%%%%%%%%% %
 %  EVALUATE GAME #3  %
 % %%%%%%%%%%%%%%%%%% %
-% % CREATE THE DOMINATING STRATEGIES MATRICES FOR EACH PLAYER
-% DOM_STRAT_3_DEFENDER  = DominatingStrategies(GAME_COST_MATRIX_3, 'defender');
-% DOM_STRAT_3_ATTACKER1 = DominatingStrategies(GAME_COST_MATRIX_3, 'attacker1');
-% DOM_STRAT_3_ATTACKER2 = DominatingStrategies(GAME_COST_MATRIX_3, 'attacker2');
-% 
-% % REDUCE THE RESOURCE ALLOCATIONS MATRICES FOR EACH PLAYER (THROW AWAY DOMINATED STRATEGIES)
-% NEW_STRAT_3_DEFENDER  = ReducedMatrix(DOM_STRAT_3_DEFENDER,  RESOURCE_MATRIX_ARRAY_3, 'defender');
-% NEW_STRAT_3_ATTACKER1 = ReducedMatrix(DOM_STRAT_3_ATTACKER1, RESOURCE_MATRIX_ARRAY_3, 'attacker1');
-% NEW_STRAT_3_ATTACKER2 = ReducedMatrix(DOM_STRAT_3_ATTACKER2, RESOURCE_MATRIX_ARRAY_3, 'attacker2');
-% 
-% % CREATE AN ARRAY OF 2-D RESOURCE MATRICES (REDUCED)
-% REDUCED_RESOURCE_MATRIX_ARRAY_3 = {NEW_STRAT_3_ATTACKER1 NEW_STRAT_3_ATTACKER2 NEW_STRAT_3_DEFENDER};
-% 
-% % BUILD THE 2-D GAME COST MATRICES USING THE SETTINGS AND RESPECTIVE GAME REDUCED RESOURCE MATRIX ARRAY
-% REDUCED_GAME_COST_MATRIX_3 = GameBuild(1,num_cyber_nodes,REDUCED_RESOURCE_MATRIX_ARRAY_3,CONNECTIONS,COST,threshold);
-% 
-% % FIND THE SIZE OF EACH REDUCED RESOURCE ALLOCATIONS MATRIX FOR EACH PLAYER
-% len_new_strat_3_defender  = size(NEW_STRAT_3_DEFENDER);
-% len_new_strat_3_attacker1 = size(NEW_STRAT_3_ATTACKER1);
-% len_new_strat_3_attacker2 = size(NEW_STRAT_3_ATTACKER2);
-% 
-% % CREATE AN ARRAY OF REDUCED RESOURCE ALLOCATIONS MATRIX SIZES
-% num_of_strat_3 = [len_new_strat_3_attacker1(1) len_new_strat_3_attacker2(1) len_new_strat_3_defender(1)];
-% 
-% % EXECUTE THE GAME CALCULATION
-% [NASH_EQ_3,payoff_3,iterations_3,err_3] = NPG2(num_of_strat_3,REDUCED_GAME_COST_MATRIX_3);
-
-[coverage_game3] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources(3));
+[coverage_game3, attacker_payoff_game3, defender_payoff_game3] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, ...
+                                                                         defender_uncovered_payoff, defender_covered_payoff, defender_resources(3));
 
 game_3_time = clock;
 game_3_time_seconds = etime(game_3_time,game_2_time);

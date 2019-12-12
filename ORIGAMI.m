@@ -6,18 +6,25 @@
 %     University of Southern California, Los Angeles, CA 90089
 %     {kiekintv, manishja, jasontts, jpita, fordon, tambe}@usc.edu
 % 
-% Syntax:  
+% Syntax:  [coverage, attacker_payoff, defender_payoff] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, ...
+%                                                                 defender_uncovered_payoff,
+%                                                                 defender_covered_payoff, defender_resources);
 % 
 % Inputs:
 %   attacker_uncovered_payoff - Attacker's vector of payoffs for each target given it is uncovered
-%   attacker_covered_payoff -  Attacker's vector of payoffs for each target given it is covered
-%   defender_resources - Defender's resources to cover targets
+%   attacker_covered_payoff   - Attacker's vector of payoffs for each target given it is covered
+%   defender_resources        - Defender's resources to cover targets
+%   defender_uncovered_payoff - Defender's vector of payoffs for each target given it is uncovered
+%   defender_covered_payoff   - Defender's vector of payoffs for each target given it is covered
 % 
 % Outputs:
 %   coverage - Defender's coverage vector
+%   attacker_payoff - Attacker's vector of final payoffs given the calculated coverage vector
+%   defender_payoff - Defender's vector of final payoffs given the calculated coverage vector
 % 
 % -----------------------------------------------------------------------------
-function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, defender_resources)
+function [coverage, attacker_payoff, defender_payoff] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff, ...
+                                                                defender_uncovered_payoff, defender_covered_payoff, defender_resources)
     % IF DEBUG_PRINT = 1, THEN DEBUG PRINT STATEMENTS ENABLED, ELSE DISABLED;
     DEBUG_PRINT = 0;
 
@@ -36,10 +43,14 @@ function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff
 
     % INITIALIZE THE COVERAGE BOUND TO BE THE MINIMAL EXPECTED PAYOFF OF THE ATTACKER
     coverage_bound = min(attacker_covered_payoff);
-    min_coverage_bound = coverage_bound;
+    coverage_bound_min = coverage_bound;
 
     % INITIALIZE THE RATIO VECTOR
     ratio = zeros(num_targets,1);
+
+    % INITIALIZE THE FINAL ATTACKER AND DEFENDER PAYOFF VECTORS
+    attacker_payoff = zeros(num_targets,1);
+    defender_payoff = zeros(num_targets,1);
 
     % DETERMINE COVERAGE TO ADD
     t = 1; % t IS THE INDEX INTO THE PAYOFF VECTOR
@@ -58,7 +69,7 @@ function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff
         % NOTE: THAT INEQUALITIES DO NOT MATCH THE PROPOSED PSEUDO-CODE BECAUSE THEY WERE INCORRECT
         %   COVERAGE BOUND SHOULD CAUSE BREAK IF GREATER THAN THE MINIMAL ATTACKER PAYOFF FOR COVERED TARGET
         %   IF TOTAL ADDED COVERAGE IS >= TO REMAINING DEFENDER RESOURCES THEN BREAK
-        if ((coverage_bound > min_coverage_bound) || sum(added_coverage(:,1)) >= defender_resources_left)
+        if ((coverage_bound > coverage_bound_min) || sum(added_coverage(:,1)) >= defender_resources_left)
             if (DEBUG_PRINT == 1)
                 display = fprintf('ORIGAMI_MSG02: Sum of added coverage probability is greater than the remaining defender resources so break. (target = %d)',target_index(t));
                 disp(display)
@@ -85,12 +96,17 @@ function [coverage] = ORIGAMI(attacker_uncovered_payoff, attacker_covered_payoff
         coverage_bound = max(coverage_bound,attacker_covered_payoff(target_index(t)));
     end % if
     
-    if (coverage_bound > min_coverage_bound)
+    if (coverage_bound > coverage_bound_min)
         coverage(target_index(t)) = ( (coverage_bound - attacker_uncovered_payoff(target_index(t))) / (attacker_covered_payoff(target_index(t)) - attacker_uncovered_payoff(target_index(t))) )
     end % if
 
     % if (DEBUG_PRINT == 1)
         coverage_sum = sum(coverage);
     % end % if
+
+    for target = 1:num_targets
+        attacker_payoff(target) = (coverage(target)*attacker_covered_payoff(target)) + ((1-coverage(target))*attacker_uncovered_payoff(target));
+        defender_payoff(target) = (coverage(target)*defender_covered_payoff(target)) + ((1-coverage(target))*defender_uncovered_payoff(target));
+    end % for
 
 end % function
