@@ -48,7 +48,7 @@ start_time = clock;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % WHAT ARE THE AVAILABLE DEFENDER RESOURCES FOR EACH GAME?
 %   [GAME_1; GAME_2; GAME_3; ... GAME_N]
-defender_resources = [2;3;4];
+defender_resources = [1;2;3;4;5;6;7;8;9;10];
 
 % WHAT IS THE PAYOFF OF EACH TARGET FOR EACH PLAYER?
 %   RESTRICT PAYOFF SUCH THAT...
@@ -56,11 +56,11 @@ defender_resources = [2;3;4];
 %   AND...
 %     attacker_uncovered_payoff(TARGET) > attacker_covered_payoff(TARGET)
 %   FOR ALL TARGETS (1;2;3;...;n)
-attacker_uncovered_payoff = [ 10; 20; 30; 40];
-attacker_covered_payoff   = [-10;-20;-30;-40];
+attacker_uncovered_payoff = [ 1; 2; 3; 4; 5; 6; 7; 8; 9; 10];
+attacker_covered_payoff   = [-1;-2;-3;-4;-5;-6;-7;-8;-9;-10];
 
-defender_uncovered_payoff = [-10;-20;-30;-40];
-defender_covered_payoff   = [ 10; 20; 30; 40];
+defender_uncovered_payoff = [-1;-2;-3;-4;-5;-6;-7;-8;-9;-10];
+defender_covered_payoff   = [ 1; 2; 3; 4; 5; 6; 7; 8; 9; 10];
 
 config_time = clock;
 config_time_seconds = etime(config_time,start_time);
@@ -131,8 +131,10 @@ end % for
 %  GENERATE RESULTS FIGURE  %
 % %%%%%%%%%%%%%%%%%%%%%%%%% %
 figure1 = figure;
+    fig1_x_axis = categorical(game_labels);
+    fig1_x_axis = reordercats(fig1_x_axis,game_labels);
     subplot(2,2,1);
-        fig1_bar1 = bar(categorical(game_labels),defender_resources);
+        fig1_bar1 = bar(fig1_x_axis,defender_resources);
         set(fig1_bar1(1),'CData',1,'FaceColor',[0 0.4470 0.7410]); % DEFENDER (BLUE-ISH)
         legend({'Defender'},'Location','bestoutside');
         title('Available Resources Per Game');
@@ -150,7 +152,7 @@ figure1 = figure;
                 fig1_bar2_y_axis = [fig1_bar2_y_axis, num_targets];
           end % if
         end % for
-        fig1_bar2 = bar(categorical(game_labels),fig1_bar2_y_axis);
+        fig1_bar2 = bar(fig1_x_axis,fig1_bar2_y_axis);
         set(fig1_bar2(1),'CData',1,'FaceColor',[1 0 1]); % TARGETS (MAGENTA)
         legend({'Targets'},'Location','bestoutside');
         title('Total Targets Per Game');
@@ -168,7 +170,7 @@ figure1 = figure;
                 fig1_bar3_y_axis = [fig1_bar3_y_axis; [sum(coverage(game,:)), defender_resources(game)-sum(coverage(game,:));]];
           end % if
         end % for
-        fig1_bar3 = bar(categorical(game_labels),fig1_bar3_y_axis, 'FaceColor','flat');
+        fig1_bar3 = bar(fig1_x_axis,fig1_bar3_y_axis, 'FaceColor','flat');
         set(fig1_bar3(1),'CData',1,'FaceColor',[0 1 0]); % UTILIZED (GREEN)
         set(fig1_bar3(2),'CData',2,'FaceColor',[1 0 0]); % NON-UTILIZED (RED)
         legend({'Utilized','Non-utilized '},'Location','bestoutside');
@@ -187,7 +189,7 @@ figure1 = figure;
                 fig1_bar4_y_axis = [fig1_bar4_y_axis; [defender_payoff(game), attacker_payoff(game);]];
           end % if
         end % for
-        fig1_bar4 = bar(categorical(game_labels),fig1_bar4_y_axis);
+        fig1_bar4 = bar(fig1_x_axis,fig1_bar4_y_axis);
         set(fig1_bar4(1),'CData',1,'FaceColor',[0 0.4470 0.7410]);      % DEFENDER (BLUE-ISH)
         set(fig1_bar4(2),'CData',1,'FaceColor',[0.8500 0.3250 0.0980]); % ATTACKER (ORANGE-ISH)
         legend({'Defender / Leader','Attacker / Follower'},'Location','bestoutside');
@@ -200,6 +202,8 @@ figure1 = figure;
         box on;
 
 figure2 = figure;
+    fig2_x_axis = categorical(game_labels);
+    fig2_x_axis = reordercats(fig2_x_axis,game_labels);
     for game = 1:num_games
         if (game == 1)
             fig2_bar1_y_axis = etime(game_time(game,:),init_time);
@@ -207,7 +211,7 @@ figure2 = figure;
             fig2_bar1_y_axis = [fig2_bar1_y_axis, etime(game_time(game,:),game_time(game-1,:))];
       end % if
     end % for
-    fig2_bar1 = bar(categorical(game_labels),fig2_bar1_y_axis);
+    fig2_bar1 = bar(fig2_x_axis,fig2_bar1_y_axis);
     set(fig2_bar1(1),'CData',1,'FaceColor',[0.9290 0.6940 0.1250]); % ELAPSED TIME (YELLOW-ISH)
     title('Elapsed Time Per Game');
     ylabel('Time (Seconds)');

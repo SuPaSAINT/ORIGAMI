@@ -73,6 +73,9 @@ function [coverage, defender_payoff, attacker_payoff] = ORIGAMI(num_targets, ...
     defender_payoff = 0;
     attacker_payoff = 0;
 
+    % INITIALIZE MISCELLANEOUS VARIABLES
+    break_flag = 0;
+
     % %%%%%%%%%%%%%%%%%%%%%%%%% %
     % CALCULATE COVERAGE VECTOR %
     % %%%%%%%%%%%%%%%%%%%%%%%%% %
@@ -115,6 +118,7 @@ function [coverage, defender_payoff, attacker_payoff] = ORIGAMI(num_targets, ...
                     display = fprintf('ORIGAMI_MSG02: Target %d.',target_index(t));
                     disp(display)
                 end % if
+                break_flag = 1;
                 break;
             end % if
 
@@ -131,6 +135,7 @@ function [coverage, defender_payoff, attacker_payoff] = ORIGAMI(num_targets, ...
                     display = fprintf('ORIGAMI_MSG03: Target %d.',target_index(t));
                     disp(display)
                 end % if
+                break_flag = 1;
                 break;
             end % if
 
@@ -138,10 +143,17 @@ function [coverage, defender_payoff, attacker_payoff] = ORIGAMI(num_targets, ...
             coverage(target_index(t)) = coverage(target_index(t)) + added_coverage(target_index(t));
 
             % UPDATE THE REMAINING DEFERNDER RESOURCES
-            defender_resources_left = defender_resources_left - sum(added_coverage(target_index(1:next-1),1));
+            % I DON'T BELIEVE THE PAPER PSEUDO-CODE HAD THIS CORRECT...DOESN'T MAKE ANY SENSE TO REDUCE
+            % THE DEFENDER'S RESOURCES BY THE TOTAL ADDED COVERAGE FOR THE ROUND FOR EACH TARGET CALCULATION.
+            % defender_resources_left = defender_resources_left - sum(added_coverage(target_index(1:next-1),1));
+            defender_resources_left = defender_resources_left - added_coverage(target_index(t));
         end % for
 
-        next = next+1;
+        if (break_flag ~= 1)
+            next = next+1;
+        else
+            break;
+        end % if
     end % while
 
     % COLLECT RATIO FOR EACH TARGET IN THE ATTACK SET TO ALLOCATE REMAINING COVERAGE PROBABILITY
@@ -176,15 +188,15 @@ function [coverage, defender_payoff, attacker_payoff] = ORIGAMI(num_targets, ...
     % %%%%%%%%%%%%%%%%%%%%%%% %
     % CALCULATE FINAL PAYOFFS %
     % %%%%%%%%%%%%%%%%%%%%%%% %
-    
     if (DEBUG_PRINT == 1)
-        display = fprintf('Sum(coverage) = %f.',sum(coverage));
+        display = fprintf('Sum(coverage) = %f.',sum(coverage(:,1)));
         disp(display)
     end % if
     
     % CHECK TO SEE IF THE TOTAL COVERAGE PROBABILITY IS > THE TOTAL DEFENDER RESOURCES
     %   IF IT IS, SOMETHING WENT WRONG AS THIS SHOULDN'T HAPPEN
-    if (sum(coverage) > defender_resources)
+    epsilon = 0.00001; % MATLAB IS DUMB AND DOESN'T COMPARE A FLOAT TO AN INTEGER PROPERLY SO USE SOME SMALL VALUE
+    if ((sum(coverage(:,1))-defender_resources) > epsilon)
         % warning('ORIGAMI_WRN01: Total coverage probability is greater than defender_resources!');
         error('ORIGAMI_ERR01: Total coverage probability is greater than defender_resources!');
     end % if
